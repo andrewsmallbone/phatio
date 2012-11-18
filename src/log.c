@@ -52,39 +52,39 @@ volatile uint8_t read_position = 0;
 void key_printf_P(const char *fmt, ...)
 {
     uint16_t len = 0;
-	va_list args;
-	va_start(args, fmt);
-	for (int16_t i=0; i<2; i++) {
-	    uint16_t buffer_remaining = BUFFER_LEN - write_position;
-	    len = vsnprintf_P((char *)buffer+write_position, buffer_remaining, fmt, args);
-	    if (len< buffer_remaining) {
-	        break;
-	    }
-	    write_position = 0;
-	    read_position = 0;
-	}
-	va_end(args);
-	write_position += len;
+     va_list args;
+     va_start(args, fmt);
+     for (int16_t i=0; i<2; i++) {
+         uint16_t buffer_remaining = BUFFER_LEN - write_position;
+         len = vsnprintf_P((char *)buffer+write_position, buffer_remaining, fmt, args);
+         if (len< buffer_remaining) {
+             break;
+         }
+         write_position = 0;
+         read_position = 0;
+     }
+     va_end(args);
+     write_position += len;
 }
 
 const char log_consume_as_char(void)
 {
     char c = 0;
     cli();
-	if (write_position != 0 && read_position < write_position) {
-		c = buffer[read_position++];
-	}
-	sei();
-	return c;
+     if (write_position != 0 && read_position < write_position) {
+          c = buffer[read_position++];
+     }
+     sei();
+     return c;
 }
 
 void log_consume_as_keyboard_report(uint8_t* report)
 {
     cli();
-	if (write_position != 0 && read_position < write_position) {
-		read_position += map_keys(report, (uint8_t *)(buffer+read_position), 1);
-	}
-	sei();
+     if (write_position != 0 && read_position < write_position) {
+          read_position += map_keys(report, (uint8_t *)(buffer+read_position), 1);
+     }
+     sei();
 }
 
 
@@ -93,12 +93,12 @@ volatile static const char status[STATUS_LEN] = "All systems functional.\n";
 
 const char *error_P(const char *fmt, ...)
 {
-	va_list args;
-	va_start(args, fmt);
+     va_list args;
+     va_start(args, fmt);
     vsnprintf_P((char *)status, STATUS_LEN, fmt, args);
-	va_end(args);
-	led_error(LEDON);
-	return (const char *)status;
+     va_end(args);
+     led_error(LEDON);
+     return (const char *)status;
 }
 
 const char const status_header[] PROGMEM = "phatIO version XXXX (bootloader XXXX)\n"
@@ -113,8 +113,8 @@ void status_handler(bool write, uint8_t data, uint8_t *buf)
         strncpy_P(buf, status_header, 510);
         eeprom_read_block(buf+15, PHATIO_VERSION_ADDR, 4);
         eeprom_read_block(buf+32, BOOTLOADER_VERSION_ADDR, 4);
-		strcpy(buf+122, (char *)status);
-	}
+          strcpy(buf+122, (char *)status);
+     }
 }
 
 
@@ -156,15 +156,15 @@ void led_error(uint8_t state)
 {
     if (led_state[RED] != LEDMANUAL) {
         led_state[RED] = state;
-	}
+     }
 }
 
 // flash the LED (if not already flashing)
 void led_flash(uint8_t led)
 {
-	if (led_state[led] == LEDSTATE_OFF) {
-		led_state[led] = FLASH;
-	}
+     if (led_state[led] == LEDSTATE_OFF) {
+          led_state[led] = FLASH;
+     }
 }
 
 // set the LED mode
@@ -181,35 +181,35 @@ void led_task(void)
     }
     uint32_t time = millis();
 
-	for (uint8_t i=0; i<NUM_LEDS; i++) {
-		switch (led_state[i]) {
+     for (uint8_t i=0; i<NUM_LEDS; i++) {
+          switch (led_state[i]) {
         case LEDMANUAL:
             break;
-		case LEDON:
-			LED_ON(i);
-			break;
-		case LEDSTATE_OFF:
-			LED_OFF(i);
-			break;
-		case FLASH:
-			if ((time & FLASH_CYCLE) <= FLASH_ON_DURATION) {
-				LED_ON(i);
-				led_state[i] = FLASH_ON;
-			}
-			break;
-		case FLASH_ON:
-			if ((time & FLASH_CYCLE) > FLASH_ON_DURATION) {
-				LED_OFF(i);
-				led_state[i] = LEDSTATE_OFF;
-			}
-			break;
-		default:
-			if ((time % 200) < 100) {
-				LED_OFF(i);
-			} else if (time % 1000 < (led_state[i]*200)) {
-				LED_ON(i);
-			}
-			break;
-		}
-	}
+          case LEDON:
+               LED_ON(i);
+               break;
+          case LEDSTATE_OFF:
+               LED_OFF(i);
+               break;
+          case FLASH:
+               if ((time & FLASH_CYCLE) <= FLASH_ON_DURATION) {
+                    LED_ON(i);
+                    led_state[i] = FLASH_ON;
+               }
+               break;
+          case FLASH_ON:
+               if ((time & FLASH_CYCLE) > FLASH_ON_DURATION) {
+                    LED_OFF(i);
+                    led_state[i] = LEDSTATE_OFF;
+               }
+               break;
+          default:
+               if ((time % 200) < 100) {
+                    LED_OFF(i);
+               } else if (time % 1000 < (led_state[i]*200)) {
+                    LED_ON(i);
+               }
+               break;
+          }
+     }
 }

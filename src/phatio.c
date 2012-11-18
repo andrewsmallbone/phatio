@@ -52,37 +52,37 @@ int main(void)
     sd_disk disk;
 
     config_init();
-	led_init();
-	pin_init();
+     led_init();
+     pin_init();
 
     scheduler_init();
     bool sd_present_on_startup = true;
 
-	// wait until sd card readable
+     // wait until sd card readable
     while (sd_init(&disk)) {
         sd_present_on_startup = false;
         LED_ON(RED);
-	    delay_ms(200);
-	    LED_OFF(RED);
-	    delay_ms(800);
-	}
+         delay_ms(200);
+         LED_OFF(RED);
+         delay_ms(800);
+     }
 
-	if (!disk_init(&disk)) {
-	    led_error(DISK_ERROR);
-	} else if (!iodir_init(&disk)) {
-	    led_error(IODIR_ERROR);
-	}
+     if (!disk_init(&disk)) {
+         led_error(DISK_ERROR);
+     } else if (!iodir_init(&disk)) {
+         led_error(IODIR_ERROR);
+     }
 
-	if (sd_present_on_startup) {
-	    LED_ON(RED);
-	    execute_runfile();
-	}
+     if (sd_present_on_startup) {
+         LED_ON(RED);
+         execute_runfile();
+     }
 
-	usb_setup(&disk);
+     usb_setup(&disk);
     pwm_init();
 
     for (;;) {
         usb_task();
         perform_triggered_task();
-	}
+     }
 }

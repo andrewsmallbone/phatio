@@ -112,10 +112,10 @@ const char PROGMEM * const modifiers[NUM_MODIFIERS] PROGMEM = { lc, ls, la, lg, 
 
 void map_ascii_key(uint8_t *report, uint8_t key)
 {
-	add_keycode(report, key & ~(KEYBOARD_SHIFT));
-	if ((key & KEYBOARD_SHIFT) == KEYBOARD_SHIFT) {
-		modifier(report) = (uint8_t)KEYBOARD_MODIFIER_LEFTSHIFT;
-	}
+     add_keycode(report, key & ~(KEYBOARD_SHIFT));
+     if ((key & KEYBOARD_SHIFT) == KEYBOARD_SHIFT) {
+          modifier(report) = (uint8_t)KEYBOARD_MODIFIER_LEFTSHIFT;
+     }
 }
 
 #define NUM_ESCAPED_CHARS 3
@@ -126,122 +126,122 @@ const uint8_t PROGMEM const escaped_values[NUM_ESCAPED_CHARS] PROGMEM = { 0x28, 
 
 uint8_t map_keys(uint8_t* report, uint8_t *input, uint8_t  extensions)
 {
-	uint8_t current_key = *input;
-	uint8_t charsRead = 1;
+     uint8_t current_key = *input;
+     uint8_t charsRead = 1;
 
-	if (current_key < 128) {
-		if ((input[0] == '%') && (input[1] == '{') && extensions) {
-			return map_extension_block(report, input);
-		}
-		if (current_key == '\\') {
-		    for (uint16_t i=0; i<NUM_ESCAPED_CHARS; i++) {
-		        if (input[1] == escaped_chars[i]) {
-		            add_keycode(report, pgm_read_byte(&escaped_values[i]));
-		            charsRead++;
-		            break;
-		        }
-		    }
-		} else if (current_key > 31) {
-			if (current_key < 65) {
-				map_ascii_key(report, pgm_read_byte(&ascii_from32[current_key-32]));
-			} else if (current_key < 91) {// A..Z
-				add_keycode(report, current_key-(65-4));
-				modifier(report) |= KEYBOARD_MODIFIER_LEFTSHIFT;
-			} else if (current_key < 97) {
-				map_ascii_key(report, pgm_read_byte(&ascii_from91[current_key-91]));
-			} else if (current_key<123) {// a..z
-				add_keycode(report,current_key-(97-4));
-			} else {
-				map_ascii_key(report, pgm_read_byte(&ascii_from123[current_key-123]));
-			}
-		} else {
-		    if (current_key == '\t') {
-		        add_keycode(report, 0x2B); // tab
+     if (current_key < 128) {
+          if ((input[0] == '%') && (input[1] == '{') && extensions) {
+               return map_extension_block(report, input);
+          }
+          if (current_key == '\\') {
+              for (uint16_t i=0; i<NUM_ESCAPED_CHARS; i++) {
+                  if (input[1] == escaped_chars[i]) {
+                      add_keycode(report, pgm_read_byte(&escaped_values[i]));
+                      charsRead++;
+                      break;
+                  }
+              }
+          } else if (current_key > 31) {
+               if (current_key < 65) {
+                    map_ascii_key(report, pgm_read_byte(&ascii_from32[current_key-32]));
+               } else if (current_key < 91) {// A..Z
+                    add_keycode(report, current_key-(65-4));
+                    modifier(report) |= KEYBOARD_MODIFIER_LEFTSHIFT;
+               } else if (current_key < 97) {
+                    map_ascii_key(report, pgm_read_byte(&ascii_from91[current_key-91]));
+               } else if (current_key<123) {// a..z
+                    add_keycode(report,current_key-(97-4));
+               } else {
+                    map_ascii_key(report, pgm_read_byte(&ascii_from123[current_key-123]));
+               }
+          } else {
+              if (current_key == '\t') {
+                  add_keycode(report, 0x2B); // tab
 // the following arent' possible from within phatIO runfile
-//	    } else if (current_key == '\n' || current_key == 13) {// new line or carriage return = enter
-//				add_keycode(report, 0x28); // ENTER
-//			} else if (current_key == 27) {
-//				add_keycode(report, 0x29); // ESCAPE
-//			} else if (current_key == 8) {
-//				add_keycode(report, 0x2A); // backspace
-			}
-		}
-	}
-	return charsRead;
+//         } else if (current_key == '\n' || current_key == 13) {// new line or carriage return = enter
+//                    add_keycode(report, 0x28); // ENTER
+//               } else if (current_key == 27) {
+//                    add_keycode(report, 0x29); // ESCAPE
+//               } else if (current_key == 8) {
+//                    add_keycode(report, 0x2A); // backspace
+               }
+          }
+     }
+     return charsRead;
 }
 
 uint8_t map_extension_block(uint8_t* report, uint8_t *input)
 {
-	int consumed = 2;
+     int consumed = 2;
 
 
-	while ((input[consumed] != 0) && (input[consumed] != '}')) {
-		uint8_t found = 0;
+     while ((input[consumed] != 0) && (input[consumed] != '}')) {
+          uint8_t found = 0;
 
-		// one of the modifiers
-		for (int modifier=0; !found && modifier<NUM_MODIFIERS; modifier++) {
-			char *m = (char *)pgm_read_word(&(modifiers[modifier]));
-			uint8_t l = strlen_P(m);
-			if (strncmp_P(input+consumed, m, l) == 0) {
-				modifier(report) |= (1<<modifier);
-				found = 1;
-				consumed += l;
-				break;
-			}
-		}
+          // one of the modifiers
+          for (int modifier=0; !found && modifier<NUM_MODIFIERS; modifier++) {
+               char *m = (char *)pgm_read_word(&(modifiers[modifier]));
+               uint8_t l = strlen_P(m);
+               if (strncmp_P(input+consumed, m, l) == 0) {
+                    modifier(report) |= (1<<modifier);
+                    found = 1;
+                    consumed += l;
+                    break;
+               }
+          }
 
-		// hex
-		if (!found && input[consumed] == '0' && input[consumed+1] == 'x') {
-			uint16_t hex = 0;
-			found = parse_number(&input[consumed], &hex);
-			if (found) {
-				consumed += 4;
-				add_keycode(report, hex);
-			}
-		}
+          // hex
+          if (!found && input[consumed] == '0' && input[consumed+1] == 'x') {
+               uint16_t hex = 0;
+               found = parse_number(&input[consumed], &hex);
+               if (found) {
+                    consumed += 4;
+                    add_keycode(report, hex);
+               }
+          }
 
-		// if we haven't found anything and there's only a single character test if an ascii
-		if ((!found && input[consumed+1] == '+') || input[consumed+1] == '}') {
-			found = map_keys(report, input+consumed, 0);
-			consumed += found;
-		}
+          // if we haven't found anything and there's only a single character test if an ascii
+          if ((!found && input[consumed+1] == '+') || input[consumed+1] == '}') {
+               found = map_keys(report, input+consumed, 0);
+               consumed += found;
+          }
 
-		// if we didn't find anything we can use we'll reprocess the whole block as plain text
-		if (!found) {
-			return map_keys(report, input, 0);
-		}
+          // if we didn't find anything we can use we'll reprocess the whole block as plain text
+          if (!found) {
+               return map_keys(report, input, 0);
+          }
 
 
-		// consume +
-		if (input[consumed] == '+') {
-			consumed++;
-			continue;
-		}
-	}
-	return consumed+1;
+          // consume +
+          if (input[consumed] == '+') {
+               consumed++;
+               continue;
+          }
+     }
+     return consumed+1;
 
 
 // test handcoding for space
-//		// check for modifiers
-//		uint8_t start = 0;
-//		if (((input[consumed] == 'L') && (input[consumed+1] == 'e') && (input[consumed+2] == 'f') && (input[consumed+3] == 't') && (start=4)) ||
-//			((input[consumed] == 'R') && (input[consumed+1] == 'i') && (input[consumed+2] == 'g') && (input[consumed+3] == 'h') && (input[consumed+4] == 't') && (start=5))) {
-//			uint8_t end = 0;
-//			uint8_t mod = 0;
-//			if ((input[start] == 'C') && (input[start+1] == 'o') && (input[start+2] == 'n') && (input[start+3] == 't') && (input[start+4] == 'r') && (input[start+5] == 'o') && (input[start+6] == 'l') && (end=start+6)) {
-//				mod = 0;
-//			} else if ((input[start] == 'S') && (input[start+1] == 'h') && (input[start+2] == 'i') && (input[start+3] == 'f') && (input[start+4] == 't') && (end=start+4)) {
-//				mod = 1;
-//			} else if ((input[start] == 'A') && (input[start+1] == 'l') && (input[start+2] == 't') && (end=start+2)) {
-//				mod = 2;
-//			} else if ((input[start] == 'G') && (input[start+1] == 'U') && (input[start+2] == 'I') && (end=start+4)) {
-//				mod = 3;
-//			}
-//			if (end > 0) {
-//				modifier(report) |= (1<<(start==5 ? 4 : 0 + mod));
-//				consumed += end+1;
-//				continue;
-//			}
+//          // check for modifiers
+//          uint8_t start = 0;
+//          if (((input[consumed] == 'L') && (input[consumed+1] == 'e') && (input[consumed+2] == 'f') && (input[consumed+3] == 't') && (start=4)) ||
+//               ((input[consumed] == 'R') && (input[consumed+1] == 'i') && (input[consumed+2] == 'g') && (input[consumed+3] == 'h') && (input[consumed+4] == 't') && (start=5))) {
+//               uint8_t end = 0;
+//               uint8_t mod = 0;
+//               if ((input[start] == 'C') && (input[start+1] == 'o') && (input[start+2] == 'n') && (input[start+3] == 't') && (input[start+4] == 'r') && (input[start+5] == 'o') && (input[start+6] == 'l') && (end=start+6)) {
+//                    mod = 0;
+//               } else if ((input[start] == 'S') && (input[start+1] == 'h') && (input[start+2] == 'i') && (input[start+3] == 'f') && (input[start+4] == 't') && (end=start+4)) {
+//                    mod = 1;
+//               } else if ((input[start] == 'A') && (input[start+1] == 'l') && (input[start+2] == 't') && (end=start+2)) {
+//                    mod = 2;
+//               } else if ((input[start] == 'G') && (input[start+1] == 'U') && (input[start+2] == 'I') && (end=start+4)) {
+//                    mod = 3;
+//               }
+//               if (end > 0) {
+//                    modifier(report) |= (1<<(start==5 ? 4 : 0 + mod));
+//                    consumed += end+1;
+//                    continue;
+//               }
 
 }
 

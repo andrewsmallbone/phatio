@@ -49,12 +49,12 @@ const iopin_t iopins[NUM_IOPINS] =     {0xC0,0xC1,0xC4,0xC5,0xC6,0xC7,  0x37,0x3
 
 const iopin_t get_iopin_by_name(const uint8_t *pinname)
 {
-	for (uint8_t i=0; i<NUM_IOPINS; i++) {
-		if (strcmp(pinname, pin_names[i]) == 0) {
-			return iopins[i];
-		}
-	}
-	return 0;
+     for (uint8_t i=0; i<NUM_IOPINS; i++) {
+          if (strcmp(pinname, pin_names[i]) == 0) {
+               return iopins[i];
+          }
+     }
+     return 0;
 }
 
 void set_in(const iopin_t iopin, uint8_t val)

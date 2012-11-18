@@ -65,9 +65,9 @@ uint8_t sd_write_block(uint32_t address, sd_disk *fs);
 
 inline uint8_t sd_read_byte(void)
 {
-	  SPDR = 0xFF;
-	  while (!(SPSR & (1<<SPIF)));
-	  return SPDR;
+       SPDR = 0xFF;
+       while (!(SPSR & (1<<SPIF)));
+       return SPDR;
 }
 
 #define sd_write_byte(out) {SPDR = out;while (!(SPSR & (1<<SPIF)));}

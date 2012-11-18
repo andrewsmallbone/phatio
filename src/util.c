@@ -115,10 +115,10 @@ uint16_t print_number(uint8_t *buf, const uint16_t value)
 
 void delay_ms(uint16_t duration)
 {
-	uint32_t end = millis()+duration;
-	while(duration-- > 0 && millis() < end) {
-		_delay_ms(1);
-	}
+     uint32_t end = millis()+duration;
+     while(duration-- > 0 && millis() < end) {
+          _delay_ms(1);
+     }
 }
 
 

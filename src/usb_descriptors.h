@@ -51,38 +51,38 @@
 
 typedef struct
 {
-	USB_Descriptor_Configuration_Header_t Config;
+     USB_Descriptor_Configuration_Header_t Config;
 
-	// Generic HID Interface
-	USB_Descriptor_Interface_t            HID_KeyboardInterface;
-	USB_HID_Descriptor_HID_t              HID_KeyboardHID;
-	USB_Descriptor_Endpoint_t             HID_ReportInEndpoint;
-//	USB_Descriptor_Endpoint_t             HID_ReportOutEndpoint;
+     // Generic HID Interface
+     USB_Descriptor_Interface_t            HID_KeyboardInterface;
+     USB_HID_Descriptor_HID_t              HID_KeyboardHID;
+     USB_Descriptor_Endpoint_t             HID_ReportInEndpoint;
+//     USB_Descriptor_Endpoint_t             HID_ReportOutEndpoint;
 
 
-	// Mass Storage Interface
-	USB_Descriptor_Interface_t            MS_Interface;
-	USB_Descriptor_Endpoint_t             MS_DataInEndpoint;
-	USB_Descriptor_Endpoint_t             MS_DataOutEndpoint;
+     // Mass Storage Interface
+     USB_Descriptor_Interface_t            MS_Interface;
+     USB_Descriptor_Endpoint_t             MS_DataInEndpoint;
+     USB_Descriptor_Endpoint_t             MS_DataOutEndpoint;
 
-//	// CDC Control Interface
-//	USB_Descriptor_Interface_Association_t   CDC_IAD;
-//	USB_Descriptor_Interface_t               CDC_CCI_Interface;
-//	USB_CDC_Descriptor_FunctionalHeader_t    CDC_Functional_Header;
-//	USB_CDC_Descriptor_FunctionalACM_t       CDC_Functional_ACM;
-//	USB_CDC_Descriptor_FunctionalUnion_t     CDC_Functional_Union;
-//	USB_Descriptor_Endpoint_t                CDC_NotificationEndpoint;
+//     // CDC Control Interface
+//     USB_Descriptor_Interface_Association_t   CDC_IAD;
+//     USB_Descriptor_Interface_t               CDC_CCI_Interface;
+//     USB_CDC_Descriptor_FunctionalHeader_t    CDC_Functional_Header;
+//     USB_CDC_Descriptor_FunctionalACM_t       CDC_Functional_ACM;
+//     USB_CDC_Descriptor_FunctionalUnion_t     CDC_Functional_Union;
+//     USB_Descriptor_Endpoint_t                CDC_NotificationEndpoint;
 //
-//	// CDC Data Interface
-//	USB_Descriptor_Interface_t               CDC_DCI_Interface;
-//	USB_Descriptor_Endpoint_t                CDC_DataOutEndpoint;
-//	USB_Descriptor_Endpoint_t                CDC_DataInEndpoint;
+//     // CDC Data Interface
+//     USB_Descriptor_Interface_t               CDC_DCI_Interface;
+//     USB_Descriptor_Endpoint_t                CDC_DataOutEndpoint;
+//     USB_Descriptor_Endpoint_t                CDC_DataInEndpoint;
 } USB_Descriptor_Configuration_t;
 
 uint16_t CALLBACK_USB_GetDescriptor(const uint16_t wValue,
-									const uint8_t wIndex,
-									const void** const DescriptorAddress)
-									ATTR_WARN_UNUSED_RESULT ATTR_NON_NULL_PTR_ARG(3);
+                                             const uint8_t wIndex,
+                                             const void** const DescriptorAddress)
+                                             ATTR_WARN_UNUSED_RESULT ATTR_NON_NULL_PTR_ARG(3);
 
 #endif
 

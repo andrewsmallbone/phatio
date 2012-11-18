@@ -139,80 +139,80 @@ uint16_t cluster_to_block(sd_disk *sd, int16_t cluster)
 
 uint8_t sfn_checksum(uint8_t sfn[])
 {
-	uint8_t checksum = 0;
-	for (uint8_t i=0; i<11; i++) {
-		checksum = (((checksum & 1) << 7) | ((checksum & 0xfe) >> 1)) + sfn[i];
-	}
-	return checksum;
+     uint8_t checksum = 0;
+     for (uint8_t i=0; i<11; i++) {
+          checksum = (((checksum & 1) << 7) | ((checksum & 0xfe) >> 1)) + sfn[i];
+     }
+     return checksum;
 }
 
 
 uint8_t fat_sfn_safe_char(uint8_t c)
 {
-	if (c == ' ' || c =='.') {
-		return 0;
-	} else if (c >= 'a' && c<= 'z') {
-		return c-('a'-'A');
-	} else if ((c >= 'A' && c<= 'Z') || (c >= '0' && c<= '9')) {
-		return c;
-	}  else {
-		static char *valid = "$%'-_@~'!()";
-		for (uint8_t i=0; valid[i]; i++) {
-			if (c == valid[i]) {
-				return c;
-			}
-		}
+     if (c == ' ' || c =='.') {
+          return 0;
+     } else if (c >= 'a' && c<= 'z') {
+          return c-('a'-'A');
+     } else if ((c >= 'A' && c<= 'Z') || (c >= '0' && c<= '9')) {
+          return c;
+     }  else {
+          static char *valid = "$%'-_@~'!()";
+          for (uint8_t i=0; valid[i]; i++) {
+               if (c == valid[i]) {
+                    return c;
+               }
+          }
 
-	}
-	return '_';
+     }
+     return '_';
 }
 
 uint8_t *fat_sfn(const uint8_t *lfn)
 {
-	static uint8_t sfn[12];
-	int len = -1;
-	int lastdot = -1;
-	uint8_t i = 0;
+     static uint8_t sfn[12];
+     int len = -1;
+     int lastdot = -1;
+     uint8_t i = 0;
 
-	// find the last . that splits filename and extension
-	for (i=0; lfn[i] && i<255; i++) {
-		len++;
-		if (lfn[i] == '.' && lfn[i+1] != '.' && lfn[i+1] != 0) {
-			lastdot = i;
-		}
-	}
+     // find the last . that splits filename and extension
+     for (i=0; lfn[i] && i<255; i++) {
+          len++;
+          if (lfn[i] == '.' && lfn[i+1] != '.' && lfn[i+1] != 0) {
+               lastdot = i;
+          }
+     }
 
-	// go through the long file name putting valid characters into the short file name
-	uint8_t j = 0;
-	for (i=0; i<(lastdot <= 0 ? len+1 : lastdot) && j<9; i++) {
-		uint8_t c = fat_sfn_safe_char(lfn[i]);
-		if (c != 0) {
-			sfn[j++] = c;
-		}
-	}
-	// trailing ~1
-	if (j>8) { // if we went past 8 characters put "~1"
-		sfn[6] = '~';
-		sfn[7] = '1';
-	} else { // otherwise add trailing spaces if necessary
-		for (; j<8; j++) {
-			sfn[j] = ' ';
-		}
-	}
+     // go through the long file name putting valid characters into the short file name
+     uint8_t j = 0;
+     for (i=0; i<(lastdot <= 0 ? len+1 : lastdot) && j<9; i++) {
+          uint8_t c = fat_sfn_safe_char(lfn[i]);
+          if (c != 0) {
+               sfn[j++] = c;
+          }
+     }
+     // trailing ~1
+     if (j>8) { // if we went past 8 characters put "~1"
+          sfn[6] = '~';
+          sfn[7] = '1';
+     } else { // otherwise add trailing spaces if necessary
+          for (; j<8; j++) {
+               sfn[j] = ' ';
+          }
+     }
 
-	// add extension
-	j=8;
-	for (i=((lastdot <= 0) ? len+1 : lastdot+1); i<=len && j<11; i++) {
-		uint8_t c = fat_sfn_safe_char(lfn[i]);
-		if (c != 0) {
-			sfn[j++] = c;
-		}
-	}
-	for (; j<11; j++) {
-		sfn[j] = ' ';
-	}
+     // add extension
+     j=8;
+     for (i=((lastdot <= 0) ? len+1 : lastdot+1); i<=len && j<11; i++) {
+          uint8_t c = fat_sfn_safe_char(lfn[i]);
+          if (c != 0) {
+               sfn[j++] = c;
+          }
+     }
+     for (; j<11; j++) {
+          sfn[j] = ' ';
+     }
 
-	return sfn;
+     return sfn;
 }
 
 

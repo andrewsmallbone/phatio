@@ -63,35 +63,35 @@ static const pin_to_channel_map map[NUM_ADC] PROGMEM = {{0,0},{1,1},{2,4},{3,5},
 int16_t read_adc(uint8_t pin)
 {
     cli();
-	uint8_t channel;
+     uint8_t channel;
 
-	uint8_t adc = 0xFF;
-	for (int16_t i=0; i<NUM_ADC; i++) {
-	    if (pgm_read_byte(&map[i].pin) == pin) {
-	        adc = pgm_read_byte(&map[i].channel);
-	        break;
-	    }
-	}
+     uint8_t adc = 0xFF;
+     for (int16_t i=0; i<NUM_ADC; i++) {
+         if (pgm_read_byte(&map[i].pin) == pin) {
+             adc = pgm_read_byte(&map[i].channel);
+             break;
+         }
+     }
 
-	if (adc == 0xFF) {
-	    return -1;
-	} else if (adc <= 7) {
-		channel = adc;
-		DIDR1 |= (1 << adc);
-	} else {
-		channel = 0x20 | (adc - 8);
-		DIDR2 |= (1 << (adc-8));
-	}
+     if (adc == 0xFF) {
+         return -1;
+     } else if (adc <= 7) {
+          channel = adc;
+          DIDR1 |= (1 << adc);
+     } else {
+          channel = 0x20 | (adc - 8);
+          DIDR2 |= (1 << (adc-8));
+     }
 
-	// ref = AVCC (VCC)
-	ADMUX = (0<<REFS1) | (1<<REFS0) | (0 << ADLAR)| (0x1F & channel);
-	ADCSRB = (ADCSRB & 0xDF) | (channel & 0x20);
+     // ref = AVCC (VCC)
+     ADMUX = (0<<REFS1) | (1<<REFS0) | (0 << ADLAR)| (0x1F & channel);
+     ADCSRB = (ADCSRB & 0xDF) | (channel & 0x20);
 
-	ADCSRA |= (1<<ADEN) | (1<<ADSC) | (1<<ADPS2) | (1<<ADPS1) | (1<<ADPS0);
-	while((ADCSRA & (1<<ADSC)));
+     ADCSRA |= (1<<ADEN) | (1<<ADSC) | (1<<ADPS2) | (1<<ADPS1) | (1<<ADPS0);
+     while((ADCSRA & (1<<ADSC)));
 
-	DIDR1 = 0;
-	DIDR2 = 0;
-	sei();
-	return ADC;
+     DIDR1 = 0;
+     DIDR2 = 0;
+     sei();
+     return ADC;
 }

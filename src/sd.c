@@ -279,56 +279,56 @@ uint8_t sd_read_block(uint32_t address, sd_disk *fs)
 
 uint8_t sd_write_start(uint32_t address, sd_disk *fs)
 {
-	if (sd_byte_addressable(fs)) {
-		address <<= 9;
-	}
+     if (sd_byte_addressable(fs)) {
+          address <<= 9;
+     }
 
-	uint8_t status = send_cmd(CMD24_58, address);
-	if (!status) {
-		send_spi(DATA_START_BLOCK);
-		set_error(0x00,0x00,"");
-		return 1;
-	} else {
-		set_error(0xC0, status, "SD card timeout starting block write");
-		DESELECT;
-		return 0;
-	}
+     uint8_t status = send_cmd(CMD24_58, address);
+     if (!status) {
+          send_spi(DATA_START_BLOCK);
+          set_error(0x00,0x00,"");
+          return 1;
+     } else {
+          set_error(0xC0, status, "SD card timeout starting block write");
+          DESELECT;
+          return 0;
+     }
 }
 
 uint8_t sd_write_finished(void)
 {
-	send_spi(0xFF);
-	send_spi(0xFF);
+     send_spi(0xFF);
+     send_spi(0xFF);
 
-	uint8_t status = send_spi(0xFF);
+     uint8_t status = send_spi(0xFF);
 
-	if ((status & DATA_RES_MASK) != DATA_RES_ACCEPTED) {
-		set_error(0xD0, status, "SD card write block not accepted");
-		DESELECT;
-		return 0;
-	} else if ((wait_for(0xFF, SD_WRITE_TIMEOUT) != 0xFF)  // wait for card to finish
-				|| (send_cmd(CMD13_4D, 0) != 0 || send_spi(0xFF) != 0)) { // and for status to be 0
-		set_error(0xD1, status, "SD card timeout ending block write");
-		DESELECT;
-		return 0;
-	}
-	set_error(0x00,0x00,"");
-	DESELECT;
-	return 1;
+     if ((status & DATA_RES_MASK) != DATA_RES_ACCEPTED) {
+          set_error(0xD0, status, "SD card write block not accepted");
+          DESELECT;
+          return 0;
+     } else if ((wait_for(0xFF, SD_WRITE_TIMEOUT) != 0xFF)  // wait for card to finish
+                    || (send_cmd(CMD13_4D, 0) != 0 || send_spi(0xFF) != 0)) { // and for status to be 0
+          set_error(0xD1, status, "SD card timeout ending block write");
+          DESELECT;
+          return 0;
+     }
+     set_error(0x00,0x00,"");
+     DESELECT;
+     return 1;
 }
 
 uint8_t sd_write_block(uint32_t address, sd_disk *fs)
 {
 
-	bool succeeded = false;
-	if (sd_write_start(address, fs)) {
-		for (int i=0; i<512; i++) {
-			sd_write_byte(fs->buf[i]);
-		}
-		succeeded = sd_write_finished();
-	}
+     bool succeeded = false;
+     if (sd_write_start(address, fs)) {
+          for (int i=0; i<512; i++) {
+               sd_write_byte(fs->buf[i]);
+          }
+          succeeded = sd_write_finished();
+     }
     RELEASE;
-	return succeeded;
+     return succeeded;
 }
 #endif
 

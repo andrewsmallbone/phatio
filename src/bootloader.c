@@ -47,7 +47,7 @@ int main(void)
     MCUSR &= ~(1 << WDRF);
     wdt_disable();
 
-	// led
+     // led
     SETUPRED();
     SETUPGREEN();
     GREENON();
@@ -59,20 +59,20 @@ int main(void)
     sd_disk sd;
     _delay_ms(250);
 
-	uint16_t flash = 0;
-	if (!sd_init(&sd) && disk_init(&sd)) {
-	    if (!find_and_load_bootfile(&sd)) {
-	        flash = 4*3;
-	    }
-	}
-	GREENOFF();
-	REDOFF();
+     uint16_t flash = 0;
+     if (!sd_init(&sd) && disk_init(&sd)) {
+         if (!find_and_load_bootfile(&sd)) {
+             flash = 4*3;
+         }
+     }
+     GREENOFF();
+     REDOFF();
 
-	for (int i=0; i<flash; i++) {
-	    REDTOGGLE();
+     for (int i=0; i<flash; i++) {
+         REDTOGGLE();
         _delay_ms(250);
- 	}
+      }
     REDOFF();
-	__asm__("jmp 0000");
-	sd_write_block(0,0);
+     __asm__("jmp 0000");
+     sd_write_block(0,0);
 }

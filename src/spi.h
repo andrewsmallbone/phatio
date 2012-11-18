@@ -105,9 +105,9 @@ extern "C"{
 
 // setup spi
 void setup_spi(uint8_t mode,   // timing mode SPI_MODE[0-4]
-	       int dord,             // data direction SPI_LSB|SPI_MSB
-	       int interrupt,        // whether to raise interrupt on recieve
-	       uint8_t clock); // clock diviser
+            int dord,             // data direction SPI_LSB|SPI_MSB
+            int interrupt,        // whether to raise interrupt on recieve
+            uint8_t clock); // clock diviser
 
 // disable spi
 void disable_spi(void);

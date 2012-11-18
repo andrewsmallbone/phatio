@@ -230,9 +230,9 @@ uint16_t item_size(Item *item)
     switch (item_type(item)) {
     case LIO_LIST:
         return 1+list_size(as_list(item));
-	case LIO_FUNCTION:
-	case LIO_VARIABLE:
-	    return 3;
+     case LIO_FUNCTION:
+     case LIO_VARIABLE:
+         return 3;
     case LIO_ATOM:
     case LIO_STRING:
         return 2+ (is_in_flash(item) ? strlen_P(value(item)) : strlen(value(item)));

@@ -34,8 +34,8 @@
 
 #include <stdint.h>
 
-#define KEYBOARD_MODIFIER_LEFTCTRL					  (1 << 0)
-#define KEYBOARD_MODIFIER_LEFTSHIFT					  (1 << 1)
+#define KEYBOARD_MODIFIER_LEFTCTRL                           (1 << 0)
+#define KEYBOARD_MODIFIER_LEFTSHIFT                           (1 << 1)
 #define KEYBOARD_MODIFIER_LEFTALT                     (1 << 2)
 #define KEYBOARD_MODIFIER_LEFTGUI                     (1 << 3)
 #define KEYBOARD_MODIFIER_RIGHTCTRL                   (1 << 4)
