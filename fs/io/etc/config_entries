@@ -1,0 +1,12 @@
+# following explains the values that can be configured
+# usage: echo "(config <id> <value> <permanent>)"
+# see www.phatio.com/guide/config
+
+1	LIO_PRINT_ERRORS
+Print errors - as if they were typed at a keyboard.
+Defaults to 0
+Useful for debugging - place "(config 1 1 0)" at the start of the runfile
+to get errors
+
+2	LIO_NO_LED
+Don't flash green and red LEDs when doing file access or errors

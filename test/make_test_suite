@@ -1,0 +1,19 @@
+#! /bin/sh
+
+cat<<EOF
+#include <stdio.h>
+
+int main(void)
+{
+	printf("starting\n");
+EOF
+
+for file in $*; do
+	grep "TEST(" $file | sed -e 's/\(.*\)/\1/'
+done
+
+cat<<EOF
+	printf("\ncomplete\n");
+}
+
+EOF

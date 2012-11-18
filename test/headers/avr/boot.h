@@ -1,0 +1,7 @@
+#define	eeprom_busy_wait()
+#define boot_page_erase(address)
+#define boot_spm_busy_wait()
+#define boot_page_fill(x,w)
+#define boot_page_write(address)
+#define boot_spm_busy_wait()
+#define boot_rww_enable()
