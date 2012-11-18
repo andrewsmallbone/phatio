@@ -55,8 +55,10 @@ static uint16_t iodir_start_cluster;
 
 // runfile name, modification time and current cluster
 static uint8_t *RUNFILE = "RUN     LIO";
+static uint32_t last_write = 0;
 static uint32_t runfile_mod = 0;
 static uint16_t runfile_cluster = 0;
+static uint8_t runfile_triggered;
 
 
 // data for the iopin files (direction, in, out, pwm, and adc)
@@ -272,7 +274,7 @@ bool has_watcher(uint32_t block, sd_disk *fs)
             uint16_t new_cluster = fatdirent_get_cluster(entry);
             if (new_cluster && (new_mod != runfile_mod || new_cluster != runfile_cluster)) {
                 runfile_cluster = new_cluster;
-                runfile_changed(runfile_cluster);
+                runfile_triggered = true;
                 runfile_mod = new_mod;
                 return true;
             }
@@ -280,6 +282,14 @@ bool has_watcher(uint32_t block, sd_disk *fs)
     }
 
     return false;
+}
+
+void check_runfile_changed(void)
+{
+    if (runfile_triggered && millis() > last_write+100) {
+        runfile_changed(runfile_cluster);
+        runfile_triggered = 0;
+    }
 }
 
 
@@ -428,6 +438,7 @@ void read_blocks(uint32_t start, uint16_t count, sd_disk *fs)
 
 void write_blocks(uint32_t start, uint16_t count, sd_disk *sd)
 {
+    last_write = millis();
     if (Endpoint_WaitUntilReady()) {
       return;
     }

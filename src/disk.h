@@ -38,6 +38,7 @@
 
 bool iodir_init(sd_disk *fs);
 void execute_runfile(void);
+void check_runfile_changed(void);
 
 void device_handlers_clear(void);
 void attach_device_handler(const char *name, void *handler);

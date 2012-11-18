@@ -83,6 +83,7 @@ int main(void)
 
     for (;;) {
         usb_task();
+        check_runfile_changed();
         perform_triggered_task();
      }
 }
