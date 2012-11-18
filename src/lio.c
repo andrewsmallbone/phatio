@@ -387,6 +387,8 @@ bool next_token(char_source *source, char *buf, uint16_t tmp_len)
             case ' ':
             case '\n':
             case '\t':
+            case 0x0D:
+//            case 0x0A:
                 if (started_token) {
                     *buf = 0; // terminate
                     return true;
