@@ -438,6 +438,7 @@ int main(int argc, char *argv[])
     uint8_t *dev_dir = create_directory(&io_dir, "dev", 0, io_cluster, 4);
 
     uint8_t *etc_dir = create_directory(&io_dir, "etc", 0, io_cluster, 4);
+    create_file(&etc_dir, "config", 0, 0, read_file("../fs/io/etc/config"), -1);
     create_file(&etc_dir, "pwm_pins", 0, 0, read_file("../fs/io/etc/pwm_pins"), -1);
     create_file(&etc_dir, "adc_pins", 0, 0, read_file("../fs/io/etc/adc_pins"), -1);
     create_file(&etc_dir, "digital_pins", 0, 0, read_file("../fs/io/etc/digital_pins"), -1);
@@ -446,10 +447,10 @@ int main(int argc, char *argv[])
 
     // stop os x creating sysfiles to drive
     // http://hostilefork.com/2009/12/02/trashes-fseventsd-and-spotlight-v100/
-    create_file(&root_dir, ".metadata_never_index", 0, 0, "Present to stop Mac Os X from indexing.\n", -1);
-    create_file(&root_dir, ".Trashes", 0, 0, "Present to stop Mac Os X from create a Trash directory.\n", -1);
+    create_file(&root_dir, ".metadata_never_index", 0, 0x05, "Present to stop Mac Os X from indexing.\n", -1);
+    create_file(&root_dir, ".Trashes", 0, 0x05, "Present to stop Mac Os X from create a Trash directory.\n", -1);
     uint8_t *event_dir = create_directory(&root_dir, ".fseventsd", 0, 0, 2);
-    create_file(&event_dir, "no_log", 0, 0, "Present to stop Mac Os X from logging filesystem events.\n", -1);
+    create_file(&event_dir, "no_log", 0, 0x05, "Present to stop Mac Os X from logging filesystem events.\n", -1);
 
 
     fprintf(stderr, "writing %d blocks \n", DATA_START+free_cluster);
