@@ -149,6 +149,16 @@ uint8_t item_type(Item *item)
     }
 }
 
+uint16_t getuint16_value(Item *item)
+{
+    return is_in_flash(item) ? pgm_read_word(value(item)) : *((uint16_t *)value(item));
+}
+
+uint16_t getuint8_value(Item *item)
+{
+    return is_in_flash(item) ? pgm_read_byte(value(item)) : *((uint8_t *)value(item));
+}
+
 const char *eval_as_string(Item *item)
 {
     uint8_t type = item_type(item);
@@ -169,11 +179,11 @@ const char *eval_as_string(Item *item)
         }
     }
     if (type == LIO_UINT8) {
-        print_number(str_buf, *((uint8_t *)value(item)));
+        print_number(str_buf, getuint8_value(item));
         return str_buf;
     }
     if (type == LIO_UINT16) {
-        print_number(str_buf, *((uint16_t *)value(item)));
+        print_number(str_buf, getuint16_value(item));
         return str_buf;
     }
 
@@ -192,7 +202,7 @@ uint16_t eval_as_uint16(Item *item)
         return eval_as_uint16(eval(as_list(item)));
     }
     if (type == LIO_UINT16) {
-        return is_in_flash(item) ? pgm_read_word(value(item)) : *((uint16_t *)value(item));
+        return getuint16_value(item);
     }
     if (type == LIO_UINT8) {
         return eval_as_uint8(item);
@@ -216,7 +226,7 @@ uint8_t eval_as_uint8(Item *item)
     uint8_t type = item_type(item);
 
     if (type == LIO_UINT8) {
-        return is_in_flash(item) ? pgm_read_byte(value(item)) : *((uint8_t *)value(item));
+        return getuint8_value(item);
     } else {
         return 0xFF & eval_as_uint16(item);
     }
