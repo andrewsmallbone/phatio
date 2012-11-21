@@ -29,3 +29,4 @@ lufa
 phatio
 support/crc_hexfile
 support/make_fs
+bootloader
