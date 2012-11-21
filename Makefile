@@ -66,6 +66,8 @@ cpphatio: phatio
 	$(shell $(UNMOUNT))
 	
 	
+combined: phatio bootloader
+	srec_cat $(shell make phatio-filename).hex -I bootloader/bootloader.hex -I -o combined-$(shell make phatio-filename).hex -I
 	
 		
 
