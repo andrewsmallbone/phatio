@@ -134,7 +134,7 @@ size: $(OBJDIR)/$(TARGET).elf
 	@avr-size $(OBJDIR)/$(TARGET).elf | tail -1 | awk '{print "FLASH: " $$1+$$2 "  RAM: " $$2+$$3}'
 
 flash: build 
-	time $(AVRDUDE) $(AVRDUDE_FLAGS) $(AVRDUDE_WRITE_FLASH) $(AVRDUDE_WRITE_FUSES)
+	time $(AVRDUDE) $(AVRDUDE_FLAGS) $(AVRDUDE_WRITE_FUSES) $(AVRDUDE_WRITE_FLASH) 
 	
 avarice:
 	avarice --mkII --jtag usb --part $(MCU) --debug :4242
