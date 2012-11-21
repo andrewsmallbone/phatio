@@ -106,16 +106,21 @@ uint16_t find_sfn_file(int16_t cluster, uint8_t *name, bool directory, sd_disk *
 
 int16_t get_next_cluster(int16_t cluster, sd_disk *sd)
 {
-    uint16_t fat_entry;
+    uint16_t next_cluster;
     if (cluster < 0) {
-        return cluster - 1;
+        next_cluster = cluster - 1;
+        if (cluster_to_block(sd, next_cluster) >= sd->data_start) {
+            return 0;
+        } else {
+            return next_cluster;
+        }
     }
 
     sd_read_block(sd->fat_start + FATBLOCK(cluster), sd);
-    memcpy(&fat_entry, sd->buf+FATOFFSET(cluster), sizeof(fat_entry));
+    memcpy(&next_cluster, sd->buf+FATOFFSET(cluster), sizeof(next_cluster));
 
-    if (fat_entry > 2 && fat_entry < 0xFFEF) {
-        return fat_entry;
+    if (next_cluster > 2 && next_cluster < 0xFFEF) {
+        return next_cluster;
     }
     return 0;
 }

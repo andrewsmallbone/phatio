@@ -292,15 +292,19 @@ void check_runfile_changed(void)
     }
 }
 
-
+#include "bootloader_leds.h"
 //
 // Setup handlers/watchers
 //
 bool iodir_init(sd_disk *fs)
 {
     // find the io dir clusters
+
     iodir_start_cluster = find_lfn_file(-1, "io", true, fs);
 
+    if (!iodir_start_cluster) {
+        return false;
+    }
     // iopin dirs
     for (uint16_t dir = 0; dir < NUM_IODIRS; dir++) {
         watched_dir *current = &iodirs[dir];
