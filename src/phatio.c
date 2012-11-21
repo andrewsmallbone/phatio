@@ -61,7 +61,7 @@ int main(void)
      // wait until sd card readable
     while (sd_init(&disk)) {
         sd_present_on_startup = false;
-        LED_ON(RED);
+         LED_ON(RED);
          delay_ms(200);
          LED_OFF(RED);
          delay_ms(800);
@@ -71,14 +71,12 @@ int main(void)
          led_error(DISK_ERROR);
      } else if (!iodir_init(&disk)) {
          led_error(IODIR_ERROR);
-     }
-
-     if (sd_present_on_startup) {
+     } else if (sd_present_on_startup) {
          LED_ON(RED);
          execute_runfile();
      }
 
-     usb_setup(&disk);
+    usb_setup(&disk);
     pwm_init();
 
     for (;;) {
