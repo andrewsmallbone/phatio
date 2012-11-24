@@ -107,6 +107,17 @@ Item *led(List *expression)
 }
 
 
+Item *port(List *expression)
+{
+    uint16_t value = eval_as_uint16(second(expression));
+    uint8_t i=0;
+    for (List *remaining = rest(rest(expression)); remaining; remaining = rest(remaining)) {
+        set_pin_value(eval_as_uint8(first(remaining)), value & (1<<i));
+        i++;
+    }
+    return 0;
+}
+
 // 8bit value (peek address)
 Item *peek(List *expression)
 {

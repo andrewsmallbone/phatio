@@ -46,8 +46,10 @@ Item *fmt(List *expression);
 Item *led(List *expression);
 Item *peek(List *expression);
 Item *poke(List *expression);
+Item *port(List *expression);
 
-#define LIO_IO_HANDLER_NAMES    "pinmode\0setpin\0getpin\0keyboard\0fmt\0led\0peek\0poke\0"
-#define LIO_IO_HANDLERS         &lio_pinmode, &lio_setpin, &lio_getpin, &keyboard, &fmt, &led, &peek, &poke
+
+#define LIO_IO_HANDLER_NAMES    "pinmode\0setpin\0getpin\0keyboard\0fmt\0led\0peek\0poke\0port\0"
+#define LIO_IO_HANDLERS         &lio_pinmode, &lio_setpin, &lio_getpin, &keyboard, &fmt, &led, &peek, &poke, &port
 
 #endif /* LIO_IO_H_ */
