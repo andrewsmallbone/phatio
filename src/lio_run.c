@@ -77,7 +77,7 @@ void eval_text(char_source *src)
     uint8_t liobuf[LIOBUFSIZE];
     List *expression;
     while ((expression = next_expression(src, liobuf, LIOBUFSIZE)) != 0) {
-        eval(expression);
+        safe_eval(expression);
     }
 }
 

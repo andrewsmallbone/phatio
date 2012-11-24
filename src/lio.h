@@ -107,7 +107,9 @@ bool next_token(char_source *source, char *buf, uint16_t tmp_len);
 
 #define as_list(item_p) ((List *)value(item_p))
 
+Item *safe_evalexpressions(List *expressions);
 Item *eval_expressions(List *expression);
+Item *safe_eval(List *expressions);
 Item *eval(List *expression);
 const char *eval_as_string(Item *item);
 uint8_t eval_as_uint8(Item *item);

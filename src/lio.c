@@ -45,6 +45,7 @@
 #define QUOTE '"'
 bool lio_stopped;
 
+
 Item *first(List *item)
 {
     return (item == 0) ? 0 : &(item->first);
@@ -108,10 +109,23 @@ List *rest(List *item)
     }
 }
 
+static uint32_t time_started = 0;
+
+bool continue_evaluating(void)
+{
+    if (time_started != 0 && time_started+2000 < millis()) {
+        lio_stop("possible runaway script");
+        return false;
+    } else {
+        return !lio_stopped;
+	}
+}
+
+
 Item *eval_expressions(List *expression)
 {
     Item *retVal;
-    for (List *remaining = expression; remaining; remaining = rest(remaining)) {
+    for (List *remaining = expression; remaining && continue_evaluating(); remaining = rest(remaining)) {
         Item *expr = first(remaining);
         if (LIO_LIST == item_type(expr)) {
             retVal = eval(as_list(expr));
@@ -121,8 +135,27 @@ Item *eval_expressions(List *expression)
 }
 
 
+Item *safe_evalexpressions(List *expressions)
+{
+    time_started = millis();
+    Item *value = eval_expressions(expressions);
+    time_started = 0;
+    return value;
+}
+
+Item *safe_eval(List *expressions)
+{
+    time_started = millis();
+    Item *value = eval(expressions);
+    time_started = 0;
+    return value;
+}
+
 Item *eval(List *expression)
 {
+    if (!continue_evaluating()) {
+        return 0;
+    }
     Item *head = first(expression);
     lio_type type = item_type(head);
     if (type == LIO_LIST) {

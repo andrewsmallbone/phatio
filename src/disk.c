@@ -175,7 +175,7 @@ void changed_devdir_block(sd_disk *fs)
                 device->cluster = member_cluster;
                 sd_read_block(cluster_to_block(fs, member_cluster), fs);
                 if (device->handler) {
-                    eval_expressions(device->handler);
+                    safe_evalexpressions(device->handler);
                 }
                 return; // TODO - more than just 1
             }
@@ -230,7 +230,7 @@ bool has_handler(uint32_t block, sd_disk *fs, bool write)
                 memset(fs->buf, 0, 512);
             }
             if (device->handler) {
-                eval_expressions(device->handler);
+                safe_evalexpressions(device->handler);
             }
             return true;
         }

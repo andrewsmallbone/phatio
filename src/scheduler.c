@@ -193,7 +193,7 @@ void perform_triggered_task(void)
     sei();
     if (handler) {
         if (is_in_flash(handler)) {
-            eval_expressions((List *)handler);
+            safe_evalexpressions((List *)handler);
         } else {
             void (*fp)(void) = (void (*)(void))handler;
             fp();
