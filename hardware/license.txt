@@ -1,0 +1,16 @@
+/****************************************************************************
+
+    Copyright (c) 2012, Andrew Smallbone <andrew@phatio.com>
+    
+   Developed as part of the phatIO system.  Support and information 
+     available at www.phatio.com
+    
+   Please support development of this and other great open source projects
+     by purchasing products from phatIO.
+
+
+  Attribution-ShareAlike 2.5 Generic (CC BY-SA 2.5)
+   http://creativecommons.org/licenses/by-sa/2.5/
+
+****************************************************************************/
+
