@@ -45,6 +45,10 @@ phatio: support lufa
 	@cp phatio/phatio.hex `make phatio-filename`.hex
 	@ls -l *.hex
 
+
+combined: phatio bootloader
+	srec_cat $(shell make phatio-filename).hex -I bootloader/bootloader.hex -I -o combined-$(shell make phatio-filename).hex -I
+
 phatio-filename:
 	@echo $(VERSION)`cat phatio/phatio.hex | ./support/crc_hexfile`
 
@@ -55,7 +59,7 @@ filesystem: support phatio
 	@ls -l `make phatio-filename`.{hex,bin}
 
 # wipe phatio with new filesystem
-newfs: filesystem
+newfs: filesystem combined
 	$(shell $(UNMOUNT))
 	sudo dd if=$(shell make phatio-filename).bin of=$(DEVICE)
 	
@@ -66,10 +70,4 @@ cpphatio: phatio
 	$(shell $(UNMOUNT))
 	
 	
-combined: phatio bootloader
-	srec_cat $(shell make phatio-filename).hex -I bootloader/bootloader.hex -I -o combined-$(shell make phatio-filename).hex -I
-	
-		
-
-
 
