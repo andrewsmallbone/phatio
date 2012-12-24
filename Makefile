@@ -1,6 +1,6 @@
 
 include local.mk
-VERSION=P001
+VERSION=X002
 
 .PHONY : test clean bootloader flash-bootloader support phatio phatio-filename newfs
 
