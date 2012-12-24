@@ -34,6 +34,7 @@
 #include "disk.h"
 #include "lio_run.h"
 #include "lio_references.h"
+#include "util/delay.h"
 
 
 static uint16_t second_arg;
@@ -175,6 +176,12 @@ Item *increment_handler(List *expression)
     return 0;
 
 }
+
+Item *delay_ms_handler(List *expression)
+{
+    delay_ms(eval_as_uint16(second(expression)));
+}
+
 
 //// (for (start expression) (test expression) (loop action expression).... code....)
 //// (for reference (list) code...

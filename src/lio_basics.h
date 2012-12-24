@@ -56,12 +56,13 @@ Item *increment_handler(List *expression);
 
 //Item *for_handler(List *expression);
 Item *while_handler(List *expression);
+Item *delay_ms_handler(List *expression);
 
 
-#define LIO_BASIC_HANDLER_NAMES "+\0-\0*\0/\0%\0~\0|\0&\0<<\0>>\0if\0eq\0<\0>\0and\0or\0not\0+=\0while\0"
+#define LIO_BASIC_HANDLER_NAMES "+\0-\0*\0/\0%\0~\0|\0&\0<<\0>>\0if\0eq\0<\0>\0and\0or\0not\0+=\0while\0delay_ms\0"
 #define LIO_BASIC_HANDLERS &add, &subtract, &multiply, &divide, &modulus, &inverse,&bitwise_or, &bitwise_and,\
         &lshift, &rshift, &if_handler, &eq_handler,&lt_handler,&gt_handler,&and_handler, &or_handler, &not_handler, &increment_handler,\
-        &while_handler
+        &while_handler, &delay_ms_handler
 
 
 #endif /* LIO_BASICS_H_ */
