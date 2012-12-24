@@ -60,7 +60,9 @@ Item *lio_pinmode(List *expression)
 Item *lio_setpin(List *expression)
 {
     const uint8_t pinid = eval_as_uint8(second(expression));
-    set_pin_value(pinid, eval_as_uint16(third(expression)));
+    for (List *values = rest(rest(expression)); values; values = rest(values)) {
+        set_pin_value(pinid, eval_as_uint16(first(values)));
+    }
     return 0;
 }
 
