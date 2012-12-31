@@ -36,7 +36,8 @@
 #include "lio.h"
 
 void scheduler_clear(void);
-void scheduler_add(uint16_t every, void *handler);
+uint8_t scheduler_add(uint16_t every, void *handler);
+Item *delete_schedule(List *expression);
 void scheduler_init(void);
 void add_triggered_task(void *handler);
 void perform_triggered_task(void);
@@ -47,8 +48,8 @@ Item *every(List *expression);
 void pulse_pin(iopin_t pin, uint16_t duration);
 extern uint8_t servo_value;
 
-#define LIO_SCHEDULER_HANDLER_NAMES "every\0"
-#define LIO_SCHEDULER_HANDLERS &every
+#define LIO_SCHEDULER_HANDLER_NAMES "every\0delete_schedule\0"
+#define LIO_SCHEDULER_HANDLERS &every, &delete_schedule
 
 
 #endif //_SCHEDULER_H_

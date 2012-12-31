@@ -43,12 +43,11 @@ typedef struct scheduled_handler {
  uint16_t every_ms;
  void *handler;
 } schedule;
-schedule tasks[MAX_SCHEDULED];
+volatile schedule tasks[MAX_SCHEDULED];
 
 #define MAX_TRIGGERED 10
 void *triggered_tasks[MAX_TRIGGERED];
 
-static uint8_t num_scheduled = 0;
 #include "iopin.h"
 static iopin_t deb;
 
@@ -94,8 +93,8 @@ ISR(TIMER0_COMPA_vect)
 //            pulse_pin(get_iopin(10), servo_value);
 //        }
 
-        for (uint16_t i=0; i<num_scheduled; i++) {
-            if ((_timeSinceStart+i) % tasks[i].every_ms == 0) {
+        for (uint16_t i=0; i<MAX_SCHEDULED; i++) {
+            if (tasks[i].handler != 0 && ((_timeSinceStart+i) % tasks[i].every_ms == 0)) {
                 if (is_in_flash(tasks[i].handler)) {
                     add_triggered_task(tasks[i].handler);
                 } else {
@@ -139,7 +138,9 @@ void scheduler_clear(void)
     for (uint16_t i=0; i<MAX_TRIGGERED; i++) {
         triggered_tasks[i] = 0;
     }
-    num_scheduled = 0;
+    for (uint16_t i=0; i<MAX_SCHEDULED; i++) {
+        tasks[i].handler = 0;
+    }
     scheduler_add(10, led_task);
 }
 
@@ -150,13 +151,24 @@ void pulse_pin(iopin_t pin, uint16_t duration)
     servo_pin = pin;
 }
 
-void scheduler_add(uint16_t every, void *handler)
+uint8_t scheduler_add(uint16_t every, void *handler)
 {
-    if (every > 0 && num_scheduled < MAX_SCHEDULED) {
-        tasks[num_scheduled].every_ms = every;
-        tasks[num_scheduled].handler = handler;
-        num_scheduled++;
-    }
+    for (uint8_t i=0; i<MAX_SCHEDULED; i++) {
+    	if (tasks[i].handler == 0) {
+	        tasks[i].handler = handler;
+	        tasks[i].every_ms = every;
+    		return i+1;
+    	}
+	}
+	return 0;
+}
+
+void scheduler_remove(uint8_t scheduled)
+{
+    if (scheduled > 0) {
+		tasks[scheduled-1].handler = 0;
+		tasks[scheduled-1].every_ms = 0;
+	}
 }
 
 void scheduler_init(void)
@@ -203,6 +215,12 @@ void perform_triggered_task(void)
 
 Item *every(List *expression)
 {
-    scheduler_add(eval_as_uint16(second(expression)),store_expression(rest(rest(expression))));
-    return 0;
+    uint8_t retval = scheduler_add(eval_as_uint16(second(expression)),store_expression(rest(rest(expression))));
+    return uint8_retval(retval);
+}
+
+Item *delete_schedule(List *expression)
+{
+	scheduler_remove(eval_as_uint8(second(expression)));
+	return 0;
 }

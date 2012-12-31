@@ -50,6 +50,9 @@ static uint8_t (*write_to_flash)(uint16_t address, uint8_t *buf) = SHARED_LOAD_P
 // Currently uses whole chunks of SPM_PAGESIZE (128bytes)
 List *store_expression(List *expr)
 {
+	if (is_in_flash(expr)) {
+		return expr;
+	}
     uint16_t flash_start = current;
 
     uint8_t *start = (uint8_t *)expr;
