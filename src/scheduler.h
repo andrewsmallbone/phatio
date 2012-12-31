@@ -37,12 +37,12 @@
 
 void scheduler_clear(void);
 uint8_t scheduler_add(uint16_t every, void *handler);
-Item *delete_schedule(List *expression);
 void scheduler_init(void);
 void add_triggered_task(void *handler);
 void perform_triggered_task(void);
 
 Item *every(List *expression);
+Item *delete_schedule(List *expression);
 
 #include "iopin.h"
 void pulse_pin(iopin_t pin, uint16_t duration);
