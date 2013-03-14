@@ -1,12 +1,27 @@
 # following explains the values that can be configured
 # usage: echo "(config <id> <value> <permanent>)"
-# see www.phatio.com/guide/config
+# if <permanent> is not specified 0 (not permanent) is assumed
+# and the config value will be reset to the previous version
+# after the next reset.
+# see http://www.phatio.com/guide/lio/config/
 
 1	LIO_PRINT_ERRORS
 Print errors - as if they were typed at a keyboard.
-Defaults to 0
-Useful for debugging - place "(config 1 1 0)" at the start of the runfile
+Defaults to 0 (errors won't be printed)
+Useful for debugging - place "(config 1 1)" at the start of the runfile
 to get errors
 
 2	LIO_NO_LED
 Don't flash green and red LEDs when doing file access or errors
+Defaults to 0 (LED is active)
+(config 2 0) to turn off
+(config 2 1) to turn on (the default)
+
+
+8	LIO_KEYBOARD_DELAY
+Specifies the default keyboard delay rate when 'printing' characters
+from the (keyboard "string") function.  This is the number of milliseconds
+between each stroke between 1 and 255.
+(config 8 0) will set the delay rate to the system default (currently 20ms)
+Most Operating Systems cannot cope with keysrokes sent at the maximum rate.
+
