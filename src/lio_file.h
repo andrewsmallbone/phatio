@@ -37,8 +37,9 @@
 Item *read_hexbyte(List *expression);
 Item *read_byte(List *expression);
 Item *driver(List *expression);
+Item *import(List *expression);
 
-#define LIO_FILE_HANDLERS &read_hexbyte, &read_byte, &driver
-#define LIO_FILE_HANDLER_NAMES "read_hexbyte\0read_byte\0driver\0"
+#define LIO_FILE_HANDLERS &read_hexbyte, &read_byte, &driver, &import
+#define LIO_FILE_HANDLER_NAMES "read_hexbyte\0read_byte\0driver\0import\0"
 
 #endif /* LIO_FILE_H_ */

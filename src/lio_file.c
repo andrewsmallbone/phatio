@@ -34,6 +34,7 @@
 #include <stdio.h>
 #include <avr/pgmspace.h>
 #include "disk.h"
+#include "sd.h"
 #include "log.h"
 #include "lio_run.h"
 
@@ -55,4 +56,28 @@ Item *driver(List *expression)
 {
     attach_device_handler(eval_as_string(second(expression)), store_expression(rest(rest(expression))));
     return 0;
+}
+
+extern int16_t buf_index;
+extern uint16_t file_cluster;
+
+Item *import(List *expression)
+{
+	const uint8_t *filename = eval_as_string(second(expression));
+
+	// remember existing file
+	int16_t old_index = buf_index;
+	uint16_t old_cluster = file_cluster;
+
+	// load and eval new file
+	uint16_t lib = find_lfn_file(find_lfn_file(-1, "io", true, sd), "lib", true, sd);
+
+	uint16_t file = find_lfn_file(lib, filename, false, sd);
+    eval_text(file_source(file));
+
+    // resurrect existing file
+	sd_read_block(cluster_to_block(sd, old_cluster), sd);
+	buf_index = old_index;
+	file_cluster = old_cluster;
+	return 0;
 }

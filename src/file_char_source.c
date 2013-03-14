@@ -40,8 +40,8 @@
 //
 static char file_reader(void);
 void file_putbacker(const char c);
-static int16_t buf_index;
-static uint16_t file_cluster;
+int16_t buf_index;
+uint16_t file_cluster;
 static char_source fsource = {.read = file_reader, .putback = file_putbacker};
 
 char_source *file_source(uint16_t cluster)
