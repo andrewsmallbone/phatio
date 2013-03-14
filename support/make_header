@@ -1,0 +1,12 @@
+#! /bin/bash
+
+
+for file in `find ../fs/io/etc -type f`; do
+	name=`basename $file`
+    echo "  create_file(&etc_dir, \"$name\", 0, 0, read_file(\"$file\"), -1);"
+done	
+
+for file in `find ../fs/io/lib -type f`; do
+	name=`basename $file`
+    echo "  create_file(&lib_dir, \"$name\", 0, 0, read_file(\"$file\"), -1);"
+done	
