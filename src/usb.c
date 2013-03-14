@@ -38,8 +38,9 @@
 #include "scsi_impl.h"
 #include "keyboard.h"
 #include "log.h"
-
+#include "config.h"
 #include "usb_descriptors.h"
+
 
 static sd_disk *sd;
 
@@ -236,13 +237,16 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
      USB_KeyboardReport_Data_t* KeyboardReport = (USB_KeyboardReport_Data_t*)ReportData;
      static uint8_t count = 0;
 
-     if (count == 20) {
+     if (count == 0) {
           KeyboardReport->KeyCode[0] = 0;
           log_consume_as_keyboard_report((uint8_t *)KeyboardReport);
-          count = 0;
+          count = get_byte_config(LIO_KEYBOARD_DELAY);
+          if (count == 0) {
+        	  count = 20;
+          }
      } else {
-         count++;
-          KeyboardReport->KeyCode[0] = 0;
+         count--;
+         KeyboardReport->KeyCode[0] = 0;
      }
 
      *ReportSize = sizeof(USB_KeyboardReport_Data_t);

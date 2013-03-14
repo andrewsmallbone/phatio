@@ -46,11 +46,13 @@ extern uint8_t byte_config[];
 #define BYTE_CONFIG_START_ADDR (CONFIG_START_ADDR+sizeof(bit_config))
 
 
+#define NUM_BOOLCONFIG 8
+#define NUM_BYTECONFIG 1
+
 #define LIO_CONFIG_INITIALIZED 0
 #define LIO_PRINT_ERRORS 1
 #define LIO_NO_LED 2
-#define NUM_BOOLCONFIG 8
-#define NUM_BYTECONFIG 1
+#define LIO_KEYBOARD_DELAY 8
 
 void config_init(void);
 
