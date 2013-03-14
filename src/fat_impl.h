@@ -52,7 +52,7 @@ int16_t get_next_cluster(int16_t cluster, sd_disk *sd);
 #endif
 
 
-uint16_t find_lfn_file(int16_t cluster, uint8_t *name, bool directory, sd_disk *sd);
+uint16_t find_lfn_file(int16_t cluster, const uint8_t *name, bool directory, sd_disk *sd);
 uint8_t sfn_checksum(uint8_t *sfn);
 uint8_t *fat_sfn(const uint8_t *lfn);
 uint8_t fat_lfn_checksum(uint8_t *sfn);

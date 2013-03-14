@@ -128,7 +128,7 @@ int16_t get_next_cluster(int16_t cluster, sd_disk *sd)
 
 
 
-uint16_t find_lfn_file(int16_t cluster, uint8_t *name, bool directory, sd_disk *sd)
+uint16_t find_lfn_file(int16_t cluster, const uint8_t *name, bool directory, sd_disk *sd)
 {
     return find_sfn_file(cluster, fat_sfn(name), directory, sd);
 }
