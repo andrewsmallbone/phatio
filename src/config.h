@@ -36,20 +36,28 @@
 #include <stdint.h>
 #include "lio.h"
 
+extern uint8_t bit_config;
+extern uint8_t byte_config[];
+
 
 #define BOOTLOADER_VERSION_ADDR (void *)0
 #define PHATIO_VERSION_ADDR (void *)4
 #define CONFIG_START_ADDR (void *)8
+#define BYTE_CONFIG_START_ADDR (CONFIG_START_ADDR+sizeof(bit_config))
 
 
 #define LIO_CONFIG_INITIALIZED 0
 #define LIO_PRINT_ERRORS 1
 #define LIO_NO_LED 2
+#define NUM_BOOLCONFIG 8
+#define NUM_BYTECONFIG 1
 
 void config_init(void);
 
-bool get_bool_config(uint8_t offset);
-bool set_bool_config(uint8_t offset, bool value, bool permanent);
+#define get_bool_config(offset) (bit_config & (1<<offset))
+#define get_byte_config(offset) (byte_config[offset-NUM_BOOLCONFIG])
+
+void set_bool_config(uint8_t offset, bool value, bool permanent);
 Item *config(List *expression);
 
 #define LIO_CONFIG_HANDLER_NAMES "config\0"

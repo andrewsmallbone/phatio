@@ -32,24 +32,24 @@
 #include "config.h"
 #include <avr/eeprom.h>
 
-static uint32_t runtime_config;
+uint8_t bit_config;
+uint8_t byte_config[NUM_BYTECONFIG];
 
 void config_init(void)
 {
-    runtime_config = eeprom_read_dword(CONFIG_START_ADDR);
+    bit_config = eeprom_read_byte(CONFIG_START_ADDR);
+    byte_config[0] = eeprom_read_byte(BYTE_CONFIG_START_ADDR);
     // on first run zero and save
     if (get_bool_config(LIO_CONFIG_INITIALIZED)) {
-        runtime_config = 0;
-        eeprom_update_dword(CONFIG_START_ADDR, runtime_config);
+        bit_config = 0;
+        eeprom_update_byte(CONFIG_START_ADDR, bit_config);
     }
 }
 
-bool get_bool_config(uint8_t offset)
-{
-    return (runtime_config & (1<<offset));
-}
 
-void set_bool_value(uint32_t *conf, uint8_t offset, bool value)
+
+
+void set_bool_value(uint8_t *conf, uint8_t offset, bool value)
 {
     if (value) {
         *conf |= (1<<offset);
@@ -58,23 +58,41 @@ void set_bool_value(uint32_t *conf, uint8_t offset, bool value)
     }
 }
 
-bool set_bool_config(uint8_t offset, bool value, bool permanent)
+void set_bool_config(uint8_t offset, bool value, bool permanent)
 {
-    set_bool_value(&runtime_config, offset, value);
+    set_bool_value(&bit_config, offset, value);
     if (permanent) {
-        uint32_t stored_config = eeprom_read_dword(CONFIG_START_ADDR);
+        uint8_t stored_config = eeprom_read_byte(CONFIG_START_ADDR);
         set_bool_value(&stored_config, offset, value);
-        eeprom_update_dword(CONFIG_START_ADDR, stored_config);
+        eeprom_update_byte(CONFIG_START_ADDR, stored_config);
     }
 }
 
 // (config <id> <value> <persist>
 Item *config(List *expression)
 {
-    uint8_t item = eval_as_uint8(second(expression));
-    Item *value = third(expression);
-    if (value) {
-        set_bool_config(item, eval_as_uint8(value), eval_as_uint8(fourth(expression)));
+    Item *value_item = third(expression);
+    if (value_item) {
+	    uint8_t item = eval_as_uint8(second(expression));
+        uint8_t value = eval_as_uint8(value_item);
+		uint8_t permanent = eval_as_uint8(fourth(expression));
+		
+		if (item < NUM_BOOLCONFIG) { // bool
+			set_bool_value(&bit_config, item, value);
+	    	if (permanent) {
+	        	uint8_t stored_config = eeprom_read_byte(CONFIG_START_ADDR);
+	       	 	set_bool_value(&stored_config, item, value);
+	        	eeprom_update_byte(CONFIG_START_ADDR, stored_config);
+	    	}
+		} else {
+			item -= NUM_BOOLCONFIG;
+			if (item < NUM_BYTECONFIG) { // byte
+				byte_config[item] = value;
+				if (permanent) {
+		        	eeprom_update_byte(BYTE_CONFIG_START_ADDR, value);
+				}
+			}
+		}
     }
     return 0;
 }
